@@ -1,0 +1,145 @@
+#include <iostream>
+#include <conio.h>
+#include <windows.h>
+
+using namespace std;
+
+// Constants
+const int WIDTH = 20;
+const int HEIGHT = 20;
+const int INITIAL_SNAKE_LENGTH = 5;
+
+// Enumerations
+enum Direction { UP, DOWN, LEFT, RIGHT };
+
+// Structure for snake segment
+struct Segment {
+    int x, y;
+};
+
+// Global variables
+Segment snake[WIDTH * HEIGHT];
+int snakeLength = INITIAL_SNAKE_LENGTH;
+int foodX, foodY;
+Direction direction = RIGHT;
+
+// Function prototypes
+void initGame();
+void drawGame();
+void updateGame();
+void handleInput();
+void checkCollision();
+
+int main() {
+    initGame();
+    while (true) {
+        drawGame();
+        handleInput();
+        updateGame();
+        checkCollision();
+        Sleep(100); // adjust speed
+    }
+    return 0;
+}
+
+void initGame() {
+    // Initialize snake
+    for (int i = 0; i < INITIAL_SNAKE_LENGTH; i++) {
+        snake[i].x = WIDTH / 2 - i;
+        snake[i].y = HEIGHT / 2;
+    }
+    // Initialize food
+    foodX = rand() % WIDTH;
+    foodY = rand() % HEIGHT;
+}
+
+void drawGame() {
+    system("cls"); // clear screen
+    for (int y = 0; y < HEIGHT; y++) {
+        for (int x = 0; x < WIDTH; x++) {
+            if (x == 0 || x == WIDTH - 1 || y == 0 || y == HEIGHT - 1) {
+                cout << "#"; // border
+            } else if (x == snake[0].x && y == snake[0].y) {
+                cout << "O"; // snake head
+            } else {
+                bool isSnake = false;
+                for (int i = 1; i < snakeLength; i++) {
+                    if (x == snake[i].x && y == snake[i].y) {
+                        cout << "o"; // snake body
+                        isSnake = true;
+                        break;
+                    }
+                }
+                if (!isSnake && x == foodX && y == foodY) {
+                    cout << "F"; // food
+                } else {
+                    cout << " "; // empty space
+                }
+            }
+        }
+        cout << endl;
+    }
+}
+
+void updateGame() {
+    // Move snake
+    for (int i = snakeLength - 1; i > 0; i--) {
+        snake[i].x = snake[i - 1].x;
+        snake[i].y = snake[i - 1].y;
+    }
+    switch (direction) {
+        case UP:
+            snake[0].y--;
+            break;
+        case DOWN:
+            snake[0].y++;
+            break;
+        case LEFT:
+            snake[0].x--;
+            break;
+        case RIGHT:
+            snake[0].x++;
+            break;
+    }
+    // Check food collision
+    if (snake[0].x == foodX && snake[0].y == foodY) {
+        snakeLength++;
+        foodX = rand() % WIDTH;
+        foodY = rand() % HEIGHT;
+    }
+}
+
+void handleInput() {
+    if (_kbhit()) {
+        char input = _getch();
+        switch (input) {
+            case 'w':
+                direction = UP;
+                break;
+            case 's':
+                direction = DOWN;
+                break;
+            case 'a':
+                direction = LEFT;
+                break;
+            case 'd':
+                direction = RIGHT;
+                break;
+        }
+    }
+}
+
+void checkCollision() {
+    // Border collision
+    if (snake[0].x == 0 || snake[0].x == WIDTH - 1 || snake[0].y == 0 || snake[0].y == HEIGHT - 1) {
+        cout << "Game Over!" << endl;
+        exit(0);
+    }
+    // Self-collision
+    for (int i = 1; i < snakeLength; i++) {
+        if (snake[0].x == snake[i].x && snake[0].y == snake[i].y) {
+            cout << "Game Over!" << endl;
+            exit(0);
+        }
+    }
+}
