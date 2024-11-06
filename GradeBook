@@ -1,0 +1,42 @@
+#include <iostream>
+using namespace std;
+
+class GradeBook {
+	public:
+		GradeBook (string);
+		void setCousreName(string);
+    string getCourseName();
+		void displayMessage();
+	private:
+		string coursename;
+};
+
+#include <iostream>
+#include "GradeBook.h"
+using namespace std;
+
+int main () {
+	GradeBook gradeBook1 ("CS101 Introduction to C++ Programming");
+	GradeBook gradeBook2 ("CS102 Data Structures in C++");
+		cout<<"Obj1 created for: "<<gradeBook1.getCourseName()
+			<<"\nObj2 created for: "<<gradeBook2.getCourseName()
+			<<endl;
+}
+
+#include <iostream>
+#include "GradeBook.h"
+using namespace std;
+
+GradeBook::GradeBook (string name) {
+	setCourseNAme(name);
+}
+void GradeBook::setCourseName (string name) {
+	courseName = name;
+}
+string GradeBook::getCourse() {
+	return courseName;
+}
+void GradeBook::displayMessage() {
+	cout<<"Welcome to the grade book for\n"<<getCourseName()
+		<<"!"<<endl;
+}
